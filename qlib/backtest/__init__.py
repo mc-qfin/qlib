@@ -206,8 +206,10 @@ def get_strategy_executor(
     trade_exchange = get_exchange(**exchange_kwargs)
 
     common_infra = CommonInfrastructure(trade_account=trade_account, trade_exchange=trade_exchange)
+    
     trade_strategy = init_instance_by_config(strategy, accept_types=BaseStrategy)
     trade_strategy.reset_common_infra(common_infra)
+
     trade_executor = init_instance_by_config(executor, accept_types=BaseExecutor)
     trade_executor.reset_common_infra(common_infra)
 

@@ -27,6 +27,8 @@ class ExpManager:
 
     The `ExpManager` is expected to be a singleton (btw, we can have multiple `Experiment`s with different uri. user can get different experiments from different uri, and then compare records of them). Global Config (i.e. `C`)  is also a singleton.
 
+    #mc:在 C.register() 中实例化 `ExpManager`，并作为 QlibRecorder 的变量，通过 R.register() 注册到全局记录器 R 中
+
     So we try to align them together.  They share the same variable, which is called **default uri**. Please refer to `ExpManager.default_uri` for details of variable sharing.
 
     When the user starts an experiment, the user may want to set the uri to a specific uri (it will override **default uri** during this period), and then unset the **specific uri** and fallback to the **default uri**.    `ExpManager._active_exp_uri` is that **specific uri**.

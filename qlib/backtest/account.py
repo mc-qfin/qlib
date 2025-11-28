@@ -385,6 +385,7 @@ class Account:
         # update current position and hold bar count in each bar end
         self.update_current_position(trade_start_time, trade_end_time, trade_exchange)
 
+        # mc: 根据当前的持仓情况更新组合指标
         if self.is_port_metr_enabled():
             # portfolio_metrics is portfolio related analysis
             self.update_portfolio_metrics(trade_start_time, trade_end_time)

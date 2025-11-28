@@ -303,6 +303,8 @@ class Position(BasePosition):
         # note that start time is 2020-01-01 00:00:00 if raw start time is "2020-01-01"
         price_end_time = start_time
         price_start_time = start_time - timedelta(days=last_days)
+
+        #mc: 这里用单独的价格数据进行计算的，并没有用交易所的数据
         price_df = D.features(
             stock_list,
             ["$close"],

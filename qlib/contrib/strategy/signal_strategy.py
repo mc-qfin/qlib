@@ -13,7 +13,7 @@ from qlib.data import D
 from qlib.data.dataset import Dataset
 from qlib.model.base import BaseModel
 from qlib.strategy.base import BaseStrategy
-from qlib.backtest.position import Position
+from qlib.backtest.position import Position 
 from qlib.backtest.signal import Signal, create_signal_from
 from qlib.backtest.decision import Order, OrderDir, TradeDecisionWO
 from qlib.log import get_module_logger
@@ -136,6 +136,9 @@ class TopkDropoutStrategy(BaseSignalStrategy):
         self.forbid_all_trade_at_limit = forbid_all_trade_at_limit
 
     def generate_trade_decision(self, execute_result=None):
+        # mc: 按照当天 cross section 的 pred_score 生成交易决策
+        # 取预测值最高的前 topk 个股票，卖出最后 n_drop 个股票
+
         # get the number of trading step finished, trade_step can be [0, 1, 2, ..., trade_len - 1]
         trade_step = self.trade_calendar.get_trade_step()
         trade_start_time, trade_end_time = self.trade_calendar.get_step_time(trade_step)
@@ -143,6 +146,7 @@ class TopkDropoutStrategy(BaseSignalStrategy):
         pred_score = self.signal.get_signal(start_time=pred_start_time, end_time=pred_end_time)
         # NOTE: the current version of topk dropout strategy can't handle pd.DataFrame(multiple signal)
         # So it only leverage the first col of signal
+        # mc: 这可以是一个新的策略：multiple signal strategy
         if isinstance(pred_score, pd.DataFrame):
             pred_score = pred_score.iloc[:, 0]
         if pred_score is None:
@@ -353,6 +357,8 @@ class WeightStrategyBase(BaseSignalStrategy):
         pred_score = self.signal.get_signal(start_time=pred_start_time, end_time=pred_end_time)
         if pred_score is None:
             return TradeDecisionWO([], self)
+        
+        # mc: trade_position  从 CommonInfra 的 account 中 中获取当前的交易仓位
         current_temp = copy.deepcopy(self.trade_position)
         assert isinstance(current_temp, Position)  # Avoid InfPosition
 

@@ -68,6 +68,7 @@ def init(default_conf="client", **kwargs):
         else:
             raise NotImplementedError(f"This type of URI is not supported")
 
+    # mc: 注册一系列工具类
     C.register()
 
     if "flask_server" in C:

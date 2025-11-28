@@ -113,6 +113,8 @@ class BaseExecutor:
         self.verbose = verbose
         self.track_data = track_data
         self._trade_exchange = trade_exchange
+
+        # mc: Executor 默认带有一个 LevelInfrastructure 实例
         self.level_infra = LevelInfrastructure()
         self.level_infra.reset_infra(common_infra=common_infra, executor=self)
         self._settle_type = settle_type
@@ -262,14 +264,15 @@ class BaseExecutor:
         if self.track_data:
             yield trade_decision
 
+        # mc: 判断当前 Executor 是否为原子执行器（非嵌套执行器）
         atomic = not issubclass(self.__class__, NestedExecutor)  # issubclass(A, A) is True
-
         if atomic and trade_decision.get_range_limit(default_value=None) is not None:
             raise ValueError("atomic executor doesn't support specify `range_limit`")
 
         if self._settle_type != BasePosition.ST_NO:
             self.trade_account.current_position.settle_start(self._settle_type)
 
+        # mc: 调用子类实现的 `_collect_data` 方法，执行具体的交易逻辑
         obj = self._collect_data(trade_decision=trade_decision, level=level)
 
         if isinstance(obj, GeneratorType):
@@ -387,8 +390,15 @@ class NestedExecutor(BaseExecutor):
         self.inner_strategy.reset_common_infra(common_infra)
 
     def _init_sub_trading(self, trade_decision: BaseTradeDecision) -> None:
+
+        # 1. 获取当前层的交易时间范围
         trade_start_time, trade_end_time = self.trade_calendar.get_step_time()
+
+        # 2. 重置内层执行器的时间范围
         self.inner_executor.reset(start_time=trade_start_time, end_time=trade_end_time)
+
+        # 3. 获取内层的 LevelInfrastructure
+        # 4. 建立层级关系：外层可以访问内层的基础设施
         sub_level_infra = self.inner_executor.get_level_infra()
         self.level_infra.set_sub_level_infra(sub_level_infra)
         self.inner_strategy.reset(level_infra=sub_level_infra, outer_trade_decision=trade_decision)

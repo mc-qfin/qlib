@@ -288,3 +288,5 @@ def get_start_end_idx(trade_calendar: TradeCalendarManager, outer_trade_decision
         return outer_trade_decision.get_range_limit(inner_calendar=trade_calendar)
     except NotImplementedError:
         return 0, trade_calendar.get_trade_len() - 1
+
+

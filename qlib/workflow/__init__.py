@@ -677,5 +677,9 @@ if sys.version_info >= (3, 9):
 else:
     QlibRecorderWrapper = QlibRecorder
 
+
 # global record
+# mc: 会通过 qlib.init() 在 C.register() 中注册:
+#   qr = QlibRecorder(exp_manager)
+#   R.register(qr)
 R: QlibRecorderWrapper = RecorderWrapper()

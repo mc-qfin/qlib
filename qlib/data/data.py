@@ -1294,6 +1294,7 @@ def register_all_wrappers(C):
     logger = get_module_logger("data")
     module = get_module_by_module_path("qlib.data")
 
+    # 默认为 LocalCalendarProvider
     _calendar_provider = init_instance_by_config(C.calendar_provider, module)
     if getattr(C, "calendar_cache", None) is not None:
         _calendar_provider = init_instance_by_config(C.calendar_cache, module, provide=_calendar_provider)

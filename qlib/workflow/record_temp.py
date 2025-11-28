@@ -466,6 +466,7 @@ class PortAnaRecord(ACRecordTemp):
     def _generate(self, **kwargs):
         pred = self.load("pred.pkl")
 
+        # mc: <> 符号是一个占位符，表示需要替换的内容， fill_placeholder() 函数会将其替换为实际的预测数据。
         # replace the "<PRED>" with prediction saved before
         placeholder_value = {"<PRED>": pred}
         for k in "executor_config", "strategy_config":
@@ -479,6 +480,7 @@ class PortAnaRecord(ACRecordTemp):
             self.backtest_config["end_time"] = get_date_by_shift(dt_values.max(), 1)
 
         artifact_objects = {}
+        # mc: 回测入口
         # custom strategy and get backtest
         portfolio_metric_dict, indicator_dict = normal_backtest(
             executor=self.executor_config, strategy=self.strategy_config, **self.backtest_config

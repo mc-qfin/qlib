@@ -391,4 +391,7 @@ class NestedDecisionExecutionWorkflow:
 
 
 if __name__ == "__main__":
+    # mc: 可以通过命令行调用
+    # 比如 python workflow.py backtest 或者 python workflow.py collect_data
+
     fire.Fire(NestedDecisionExecutionWorkflow)
