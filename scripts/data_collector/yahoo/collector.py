@@ -371,7 +371,7 @@ class YahooNormalize(BaseNormalize):
     @staticmethod
     def calc_change(df: pd.DataFrame, last_close: float) -> pd.Series:
         df = df.copy()
-        _tmp_series = df["close"].fillna(method="ffill")
+        _tmp_series = df["close"].ffill()
         _tmp_shift_series = _tmp_series.shift(1)
         if last_close is not None:
             _tmp_shift_series.iloc[0] = float(last_close)
@@ -459,7 +459,7 @@ class YahooNormalize1d(YahooNormalize, ABC):
         df.set_index(self._date_field_name, inplace=True)
         if "adjclose" in df:
             df["factor"] = df["adjclose"] / df["close"]
-            df["factor"] = df["factor"].fillna(method="ffill")
+            df["factor"] = df["factor"].ffill()
         else:
             df["factor"] = 1
         for _col in self.COLUMNS:
@@ -612,10 +612,6 @@ class YahooNormalize1min(YahooNormalize, ABC):
     @abc.abstractmethod
     def symbol_to_yahoo(self, symbol):
         raise NotImplementedError("rewrite symbol_to_yahoo")
-
-    @abc.abstractmethod
-    def _get_1d_calendar_list(self) -> Iterable[pd.Timestamp]:
-        raise NotImplementedError("rewrite _get_1d_calendar_list")
 
 
 class YahooNormalizeUS:
