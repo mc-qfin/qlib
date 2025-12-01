@@ -60,7 +60,10 @@ def collect_data_loop(
     """Generator for collecting the trade decision data for rl training
 
     通过 yeild from 返回一个 decision 对象, 最后将结果写入 return_value，
-    上层调用者从传入的 return_value 中获取结果
+    上层调用者从传入的 return_value 中获取结果，
+    yeild 用来返回 sublevel excutor 中的 strategy 的 trade decision 给上层 strategy 使用,
+    在 ProxySAOEStrategy::_generate_trade_decision 中会调用该函数, 通过 yield self 语句
+    把 strategy 实例本身传递给上层 strategy 使用
 
     Parameters
     ----------
@@ -94,7 +97,8 @@ def collect_data_loop(
     # 在 backtest_loop 中会被调用，这两句只执行一次
     # executer.reset() 会调用到 LevelInfrastructure::reset_cal() 该函数会创建 trade_calendar
     # 
-    trade_executor.reset(start_time=start_time, end_time=end_time)
+    trade_exereset
+    cutor.reset(start_time=start_time, end_time=end_time)
     trade_strategy.reset(level_infra=trade_executor.get_level_infra())
 
 
@@ -114,6 +118,7 @@ def collect_data_loop(
             bar.update(1)
         trade_strategy.post_upper_level_exe_step()
 
+    # 统计各个 executor 的指标，写入 return_value
     if return_value is not None:
         all_executors = trade_executor.get_all_executors()
 
