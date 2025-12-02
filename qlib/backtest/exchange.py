@@ -173,6 +173,7 @@ class Exchange:
         # $change is for calculating the limit of the stock
 
         # 　get volume limit from kwargs
+        # mc: 如果是 volume_threshold=None，则 buy_vol_limit 和 sell_vol_limit 都是 None
         self.buy_vol_limit, self.sell_vol_limit, vol_lt_fields = self._get_vol_limit(volume_threshold)
 
         necessary_fields = {self.buy_price, self.sell_price, "$close", "$change", "$factor", "$volume"}
@@ -520,6 +521,13 @@ class Exchange:
         end_time: pd.Timestamp,
     ) -> Optional[float]:
         """
+        mc: 获取数据的调整因子（复权因子）
+            ：返回指定股票在给定时间区间内的调整因子（$factor）。这个因子用于把“金额/股数”在复权/未复权价之间做换算，常用于按交易单位舍入（trade unit）或把数量映射到交易最小单位。
+
+            https://qlib.readthedocs.io/en/latest/component/data.html
+            
+            Qlib normalize the price on first trading day of each stock to 1 when adjusting them. Users can leverage $factor to get the original trading price (e.g. $close / $factor to get the original close price).
+
         Returns
         -------
         Optional[float]:
@@ -881,6 +889,9 @@ class Exchange:
         # - It simulates that the order is rejected directly by the exchange due to large order
         # Another choice is placing it after rounding the order
         # - It simulates that the large order is submitted, but partial is dealt regardless of rounding by trading unit.
+        # mc: 通过 dealt_order_amount 来读取今日已经成交的数量，当 volume_threshold 有值时，需要对
+        # 每日的交易量进行限制，所以需要先进行这一步的裁剪出实际可交易数量
+        # 这里直接对 order 对象中的 deal_amount 进行修改
         self._clip_amount_by_volume(order, dealt_order_amount)
 
         # TODO: the adjusted cost ratio can be overestimated as deal_amount will be clipped in the next steps

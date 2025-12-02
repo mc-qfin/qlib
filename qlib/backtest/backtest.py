@@ -97,8 +97,7 @@ def collect_data_loop(
     # 在 backtest_loop 中会被调用，这两句只执行一次
     # executer.reset() 会调用到 LevelInfrastructure::reset_cal() 该函数会创建 trade_calendar
     # 
-    trade_exereset
-    cutor.reset(start_time=start_time, end_time=end_time)
+    trade_executor.reset(start_time=start_time, end_time=end_time)
     trade_strategy.reset(level_infra=trade_executor.get_level_infra())
 
 

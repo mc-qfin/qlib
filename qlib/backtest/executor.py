@@ -295,6 +295,8 @@ class BaseExecutor:
             **kwargs,
         )
 
+        # mc: 可以在这里判断是否是跨天，跨天的话，调用交易所的复权逻辑
+        # self.common_infra.adjust_for_new_day(...)
         self.trade_calendar.step()
 
         if self._settle_type != BasePosition.ST_NO:
