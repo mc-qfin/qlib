@@ -299,7 +299,9 @@ class SAOEStateAdapter:
 
 
 class SAOEStrategy(RLStrategy):
-    """RL-based strategies that use SAOEState as state."""
+    """RL-based strategies that use SAOEState as state.
+    mc: Single Asset Order Execution Strategy
+    """
 
     def __init__(
         self,

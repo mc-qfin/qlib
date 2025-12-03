@@ -125,6 +125,8 @@ class TradeCalendarManager:
             - If shift > 0, return the trading time range of the earlier shift bars
             - If shift < 0, return the trading time range of the later shift bar
         """
+
+        # mc: 如果 step ==0 的情况，则返回 start_time 和 start_time + freq 的时间区间
         if trade_step is None:
             trade_step = self.get_trade_step()
         calendar_index = self.start_index + trade_step - shift
