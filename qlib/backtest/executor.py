@@ -264,7 +264,8 @@ class BaseExecutor:
         if self.track_data:
             yield trade_decision
 
-        # mc: 判断当前 Executor 是否为原子执行器（非嵌套执行器）
+        # mc: 判断当前 Executor 是否为原子执行器（非嵌套执行器）, 
+        # 如果不是 NestedExecutor 的子类，则返回 True
         atomic = not issubclass(self.__class__, NestedExecutor)  # issubclass(A, A) is True
         if atomic and trade_decision.get_range_limit(default_value=None) is not None:
             raise ValueError("atomic executor doesn't support specify `range_limit`")
@@ -273,6 +274,7 @@ class BaseExecutor:
             self.trade_account.current_position.settle_start(self._settle_type)
 
         # mc: 调用子类实现的 `_collect_data` 方法，执行具体的交易逻辑
+        # 
         obj = self._collect_data(trade_decision=trade_decision, level=level)
 
         if isinstance(obj, GeneratorType):
@@ -613,6 +615,7 @@ class SimulatorExecutor(BaseExecutor):
 
             # execute the order.
             # NOTE: The trade_account will be changed in this function
+            # mc: exchange 会对 account 进行修改
             trade_val, trade_cost, trade_price = self.trade_exchange.deal_order(
                 order,
                 trade_account=self.trade_account,

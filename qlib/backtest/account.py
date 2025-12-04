@@ -230,6 +230,8 @@ class Account:
     ) -> None:
         """
         Update current to make rtn consistent with earning at the end of bar, and update holding bar count of stock
+
+        mc: 更新持仓中的股票价格
         """
         # update price for stock in the position and the profit from changed_price
         # NOTE: updating position does not only serve portfolio metrics, it also serve the strategy
